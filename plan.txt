@@ -1,0 +1,77 @@
++ Input Component: http://api.openweathermap.org/geo/1.0/direct?q={city name}&limit=5&appid={API key} 
+
+    + Date
+
+    + Time 
+
+    + Time Zone 
+
+    + Input 
+
+
+
+
++ Current Weather Component: https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
+
+    + Location, Date
+
+    + Celsius Degree, Sky
+
+        --> celsius = main.temp − 273.15 (Celsius Degree)
+
+        --> weather.main (Sky)
+
+    + Icon
+
+        --> weather.icon 
+
+        --> URL: https://openweathermap.org/img/wn/10d@2x.png
+
+
+
+
++ Air Condition Component
+
+    + Real Feel --> Celsius
+
+        --> main.feels_like
+
+    + Wind --> 6.69m/s
+
+        --> wind.speed
+
+    + Clouds --> 40%
+
+        --> clouds.all
+
+    + Humidity --> 70%
+
+        --> main.humidity
+
+
+
+
++ Today's Forecast Component 
+
+    + Time --> 15:00
+
+    + Icon
+
+    + Temp --> Celsius 
+
+
+
+
++ Weekly Forecast Component
+
+    + Day 
+
+    + Sky 
+
+    + Temp --> Celsius
+
+    + Clouds
+
+    + Wind
+
+    + Humidity
