@@ -5,6 +5,7 @@ import { format } from "date-fns";
 
 import { LocationInput } from './components/LocationInput';
 import { CurrentWeather } from './components/CurrentWeather';
+import { HourlyForecast } from './components/HourlyForecast';
 
 let API_KEY = "b3841f0163c11996b52fe4179a864144"
 
@@ -12,6 +13,35 @@ function App() {
   const [date, setDate] = useState(new Date());
   const [location, setLocation] = useState({});
   const [currentWeather, setCurrentWeather] = useState()
+  const [next24Hrs, setNext24Hrs] = useState(null)
+
+  function getTheNext24HoursForecast(data) {
+    let multipleDateStr = data.hourly.time
+
+    let currentHour = date.getHours()
+    // Find the current date (by hour) from the parameter array (parameter contains an array of 168 dates as strings)
+    let str = multipleDateStr.find(str => {
+      let d = new Date(str)
+      let h = d.getHours()
+      if(h == currentHour) {
+        return str
+      }
+    })
+    // Get the index of the string inside the parameter array
+    let i = multipleDateStr.indexOf(`${str}`)
+
+    // Create an array of info objects for the next 24 hour forecast
+    let arr = []
+    let max = i + 24
+    for(let r = i; r < max; r++) {
+      arr.push({
+        time: multipleDateStr[r],
+        temp: data.hourly.temperature_2m[r],
+        icon: data.hourly.weather_code[r]
+      })
+    }
+    setNext24Hrs(arr)
+  }
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -44,14 +74,27 @@ function App() {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location.lat && location.lon) {
+      async function getHourlyForecast(lat, lon) {
+        let res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=43.5789&longitude=-79.6583&hourly=temperature_2m,weather_code`
+        );
+        let data = await res.json()
+        getTheNext24HoursForecast(data)
+      }
+      getHourlyForecast(location.lat, location.lon);
+    }
+  }, [location]);
+
   return (
     <>
       <LocationInput
         year={date.getFullYear()}
-        month={format(date, 'MM')}
-        day={format(date, 'dd')}
-        hour={format(date, 'HH')}
-        minute={format(date, 'mm')}
+        month={format(date, "MM")}
+        day={format(date, "dd")}
+        hour={format(date, "HH")}
+        minute={format(date, "mm")}
         setLocation={setLocation}
       />
 
@@ -59,8 +102,7 @@ function App() {
         <CurrentWeather
           location={currentWeather.location}
           day={date.getDate()}
-          // month={date.getMonth() + 1}
-          month={format(date, 'MMM')}
+          month={format(date, "MMM")}
           temp={currentWeather.temp}
           sky={currentWeather.sky}
           icon={currentWeather.skyIcon}
@@ -69,6 +111,17 @@ function App() {
           cloud={currentWeather.cloud}
           humidity={currentWeather.humidity}
         />
+      )}
+
+      {next24Hrs && (
+        <div>
+          <h1>Today's Forecast</h1>
+          <div>
+            {next24Hrs.map((e, i) => (
+              <HourlyForecast key={i} time={e.time} temp={e.temp} />
+            ))}
+          </div>
+        </div>
       )}
     </>
   );
