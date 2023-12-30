@@ -1,7 +1,7 @@
 import './App.css'
 
 import { useState, useEffect } from 'react'
-import { format } from "date-fns";
+import { format, add, sub } from "date-fns";
 
 import { LocationInput } from './components/LocationInput';
 import { CurrentWeather } from './components/CurrentWeather';
@@ -36,11 +36,20 @@ function App() {
     for(let r = i; r < max; r++) {
       arr.push({
         time: multipleDateStr[r],
-        temp: data.hourly.temperature_2m[r],
+        temp: Math.floor(data.hourly.temperature_2m[r]),
         icon: data.hourly.weather_code[r]
       })
     }
     setNext24Hrs(arr)
+  }
+
+  function getLocalTime(yourTimezoneOffset, localTimezoneOffset) {
+    let d = new Date()
+    if(yourTimezoneOffset < localTimezoneOffset) {
+      return add(d, {hours: localTimezoneOffset - yourTimezoneOffset})
+    } else {
+      return sub(d, {hours: yourTimezoneOffset - localTimezoneOffset})
+    }
   }
 
   useEffect(() => {
@@ -67,7 +76,8 @@ function App() {
           realFeel: Math.floor(data.main.feels_like - 273.15),
           wind: (data.wind.speed).toFixed(2),
           cloud: data.clouds.all,
-          humidity: data.main.humidity
+          humidity: data.main.humidity, 
+          timezone_hr: data.timezone / 60 /60
         });
       }
       getCurrentWeather(location.lat, location.lon);
@@ -78,7 +88,7 @@ function App() {
     if (location.lat && location.lon) {
       async function getHourlyForecast(lat, lon) {
         let res = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=43.5789&longitude=-79.6583&hourly=temperature_2m,weather_code`
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weather_code`
         );
         let data = await res.json()
         getTheNext24HoursForecast(data)
@@ -86,6 +96,13 @@ function App() {
       getHourlyForecast(location.lat, location.lon);
     }
   }, [location]);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const timezoneOffsetMinutes = currentDate.getTimezoneOffset();
+    const hours = -Math.floor(Math.abs(timezoneOffsetMinutes) / 60);
+    currentWeather && console.log(getLocalTime(hours, currentWeather.timezone_hr))
+  }, [currentWeather])
 
   return (
     <>
