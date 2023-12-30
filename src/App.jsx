@@ -13,12 +13,13 @@ function App() {
   const [date, setDate] = useState(new Date());
   const [location, setLocation] = useState({});
   const [currentWeather, setCurrentWeather] = useState()
+  const [localTimeOfSearchedLocation, setLocalTimeOfSearchedLocation] = useState(null)
   const [next24Hrs, setNext24Hrs] = useState(null)
 
   function getTheNext24HoursForecast(data) {
     let multipleDateStr = data.hourly.time
 
-    let currentHour = date.getHours()
+    let currentHour = localTimeOfSearchedLocation.getHours()
     // Find the current date (by hour) from the parameter array (parameter contains an array of 168 dates as strings)
     let str = multipleDateStr.find(str => {
       let d = new Date(str)
@@ -95,13 +96,13 @@ function App() {
       }
       getHourlyForecast(location.lat, location.lon);
     }
-  }, [location]);
+  }, [localTimeOfSearchedLocation]);
 
   useEffect(() => {
     const currentDate = new Date();
     const timezoneOffsetMinutes = currentDate.getTimezoneOffset();
     const hours = -Math.floor(Math.abs(timezoneOffsetMinutes) / 60);
-    currentWeather && console.log(getLocalTime(hours, currentWeather.timezone_hr))
+    currentWeather && setLocalTimeOfSearchedLocation(getLocalTime(hours, currentWeather.timezone_hr))
   }, [currentWeather])
 
   return (
@@ -135,7 +136,7 @@ function App() {
           <h1>Today's Forecast</h1>
           <div>
             {next24Hrs.map((e, i) => (
-              <HourlyForecast key={i} time={e.time} temp={e.temp} />
+              <HourlyForecast key={i} time={(new Date(`${e.time}`)).getHours()} temp={e.temp} />
             ))}
           </div>
         </div>
