@@ -12,10 +12,9 @@ export function HourlyForecast(props) {
 
     return (
         <div className="hourly-forecast">
-            <p>Time: {props.time}</p>
-            <p>Icon: {imageName}</p>
-            <img src={`../../public/weather-icons/${imageName}.png`} />
-            <p>Temp: {props.temp}</p>
+            <p>{props.time}</p>
+            <img width={"30px"} src={`../../public/weather-icons/${imageName}.png`} />
+            <p>{props.temp} &deg;C</p>
         </div>
     )
 }

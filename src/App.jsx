@@ -36,7 +36,7 @@ function App() {
     let max = i + 24
     for(let r = i; r < max; r++) {
       arr.push({
-        time: multipleDateStr[r],
+        time: format(new Date(multipleDateStr[r]), "HH:mm"),
         temp: Math.floor(data.hourly.temperature_2m[r]),
         icon: data.hourly.weather_code[r]
       })
@@ -105,6 +105,10 @@ function App() {
     currentWeather && setLocalTimeOfSearchedLocation(getLocalTime(hours, currentWeather.timezone_hr))
   }, [currentWeather])
 
+  useEffect(() => {
+    next24Hrs && console.log(next24Hrs)
+  }, [next24Hrs])
+
   return (
     <>
       <LocationInput
@@ -136,7 +140,7 @@ function App() {
           <h1>Today's Forecast</h1>
           <div>
             {next24Hrs.map((e, i) => (
-              <HourlyForecast key={i} time={(new Date(`${e.time}`)).getHours()} temp={e.temp} icon={e.icon}/>
+              <HourlyForecast key={i} time={e.time} temp={e.temp} icon={e.icon}/>
             ))}
           </div>
         </div>
