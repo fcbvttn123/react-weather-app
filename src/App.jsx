@@ -136,7 +136,7 @@ function App() {
           <h1>Today's Forecast</h1>
           <div>
             {next24Hrs.map((e, i) => (
-              <HourlyForecast key={i} time={(new Date(`${e.time}`)).getHours()} temp={e.temp} />
+              <HourlyForecast key={i} time={(new Date(`${e.time}`)).getHours()} temp={e.temp} icon={e.icon}/>
             ))}
           </div>
         </div>
