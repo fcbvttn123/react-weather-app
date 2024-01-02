@@ -105,10 +105,6 @@ function App() {
     currentWeather && setLocalTimeOfSearchedLocation(getLocalTime(hours, currentWeather.timezone_hr))
   }, [currentWeather])
 
-  useEffect(() => {
-    next24Hrs && console.log(next24Hrs)
-  }, [next24Hrs])
-
   return (
     <>
       <LocationInput
@@ -137,7 +133,7 @@ function App() {
 
       {next24Hrs && (
         <div>
-          <h1 className="text-center text-lg font-bold mt-10">Today's Forecast</h1>
+          <h1 className="text-center text-lg font-bold mt-10 mb-3">Today's Forecast</h1>
           <div className="flex items-center gap-x-2 overflow-y-scroll">
             {next24Hrs.map((e, i) => (
               <HourlyForecast key={i} time={e.time} temp={e.temp} icon={e.icon}/>
