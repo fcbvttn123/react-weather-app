@@ -134,7 +134,7 @@ function App() {
       {next24Hrs && (
         <div>
           <h1 className="text-center text-lg font-bold mt-10 mb-3">Today's Forecast</h1>
-          <div className="flex items-center gap-x-2 overflow-y-scroll">
+          <div className="flex items-center overflow-y-scroll pb-4">
             {next24Hrs.map((e, i) => (
               <HourlyForecast key={i} time={e.time} temp={e.temp} icon={e.icon}/>
             ))}
