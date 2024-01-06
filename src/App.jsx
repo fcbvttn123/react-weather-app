@@ -6,6 +6,7 @@ import { format, add, sub } from "date-fns";
 import { LocationInput } from './components/LocationInput';
 import { CurrentWeather } from './components/CurrentWeather';
 import { HourlyForecast } from './components/HourlyForecast';
+import { DailyForecast } from './components/DailyForecast';
 
 let API_KEY = "b3841f0163c11996b52fe4179a864144"
 
@@ -15,6 +16,7 @@ function App() {
   const [currentWeather, setCurrentWeather] = useState()
   const [localTimeOfSearchedLocation, setLocalTimeOfSearchedLocation] = useState(null)
   const [next24Hrs, setNext24Hrs] = useState(null)
+  const [dailyForecast, setDailyForecast] = useState(null)
 
   function getTheNext24HoursForecast(data) {
     let multipleDateStr = data.hourly.time
@@ -85,6 +87,30 @@ function App() {
     }
   }, [location]);
 
+  // Get Daily Forecast
+  useEffect(() => {
+    if (location.lat && location.lon) {
+      async function getDailyForecast(lat, lon) {
+        let res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum`)
+        if(!res.ok) {
+          throw new Error("failed to fetch")
+        } 
+        let data = await res.json()
+        let dailyForecastArray = []
+        data.daily.time.forEach((time, i) => {
+          dailyForecastArray.push({
+            time: i == 0 ? "Today" : format(time, "EEEE"), 
+            maxTemp: data.daily.temperature_2m_max[i],
+            minTemp: data.daily.temperature_2m_min[i],
+            icon: data.daily.weather_code[i]
+          })
+        })
+        setDailyForecast(dailyForecastArray)
+      }
+      getDailyForecast(location.lat, location.lon)
+    }
+  }, [location])
+
   useEffect(() => {
     if (location.lat && location.lon) {
       async function getHourlyForecast(lat, lon) {
@@ -107,36 +133,64 @@ function App() {
 
   return (
     <>
-      <LocationInput
-        year={date.getFullYear()}
-        month={format(date, "MM")}
-        day={format(date, "dd")}
-        hour={format(date, "HH")}
-        minute={format(date, "mm")}
-        setLocation={setLocation}
-      />
-
-      {currentWeather && (
-        <CurrentWeather
-          location={currentWeather.location}
-          day={date.getDate()}
-          month={format(date, "MMM")}
-          temp={currentWeather.temp}
-          sky={currentWeather.sky}
-          icon={currentWeather.skyIcon}
-          realFeel={currentWeather.realFeel}
-          wind={currentWeather.wind}
-          cloud={currentWeather.cloud}
-          humidity={currentWeather.humidity}
+      <div>
+        <LocationInput
+          year={date.getFullYear()}
+          month={format(date, "MM")}
+          day={format(date, "dd")}
+          hour={format(date, "HH")}
+          minute={format(date, "mm")}
+          setLocation={setLocation}
         />
-      )}
 
-      {next24Hrs && (
+        {currentWeather && (
+          <CurrentWeather
+            location={currentWeather.location}
+            day={date.getDate()}
+            month={format(date, "MMM")}
+            temp={currentWeather.temp}
+            sky={currentWeather.sky}
+            icon={currentWeather.skyIcon}
+            realFeel={currentWeather.realFeel}
+            wind={currentWeather.wind}
+            cloud={currentWeather.cloud}
+            humidity={currentWeather.humidity}
+          />
+        )}
+
+        {next24Hrs && (
+          <div>
+            <h1 className="text-center text-lg font-bold mt-10 mb-3">
+              Today's Forecast
+            </h1>
+            <div className="flex items-center overflow-y-scroll pb-4">
+              {next24Hrs.map((e, i) => (
+                <HourlyForecast
+                  key={i}
+                  time={i == 0 ? "Now" : e.time}
+                  temp={e.temp}
+                  icon={e.icon}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        </div>
+
+      {dailyForecast && (
         <div>
-          <h1 className="text-center text-lg font-bold mt-10 mb-3">Today's Forecast</h1>
-          <div className="flex items-center overflow-y-scroll pb-4">
-            {next24Hrs.map((e, i) => (
-              <HourlyForecast key={i} time={e.time} temp={e.temp} icon={e.icon}/>
+          <h1 className="text-center text-lg font-bold mt-10 mb-3">
+            Daily Forecast
+          </h1>
+          <div className="flex flex-col items-start gap-y-4">
+            {dailyForecast.map((e, i) => (
+              <DailyForecast
+                key={i}
+                day={e.time}
+                maxTemp={e.maxTemp}
+                minTemp={e.minTemp}
+                icon={e.icon}
+              />
             ))}
           </div>
         </div>
@@ -157,3 +211,5 @@ export default App
     // Get Date every seconds
 
     // Hard code city in Location Input component
+
+    // Daily Forecast Style
