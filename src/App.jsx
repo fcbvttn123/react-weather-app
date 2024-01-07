@@ -99,9 +99,9 @@ function App() {
         let dailyForecastArray = []
         data.daily.time.forEach((time, i) => {
           dailyForecastArray.push({
-            time: i == 0 ? "Today" : format(time, "EEEE"), 
-            maxTemp: data.daily.temperature_2m_max[i],
-            minTemp: data.daily.temperature_2m_min[i],
+            time: i == 0 ? "Today" : format(add(time, {days: 1}), "EEEE"), 
+            maxTemp: Math.floor(data.daily.temperature_2m_max[i]),
+            minTemp: Math.floor(data.daily.temperature_2m_min[i]),
             icon: data.daily.weather_code[i]
           })
         })
@@ -143,7 +143,7 @@ function App() {
           setLocation={setLocation}
         />
 
-        {currentWeather && (
+        {currentWeather ? (
           <CurrentWeather
             location={currentWeather.location}
             day={date.getDate()}
@@ -156,6 +156,10 @@ function App() {
             cloud={currentWeather.cloud}
             humidity={currentWeather.humidity}
           />
+        ) : (
+          <div>
+            <p className='text-3xl text-center font-semibold mt-24'>Enter your city name above</p>
+          </div>
         )}
 
         {next24Hrs && (
@@ -175,7 +179,7 @@ function App() {
             </div>
           </div>
         )}
-        </div>
+      </div>
 
       {dailyForecast && (
         <div>
