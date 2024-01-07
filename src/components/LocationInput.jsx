@@ -16,7 +16,7 @@ export function LocationInput(props) {
     }
 
     async function getLocationInformation() {
-        let res = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${inputValue}&limit=5&appid=${API_KEY}`)
+        let res = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${inputValue}&limit=5&appid=${API_KEY}`)
         let data = await res.json()
         data && setLocation({lat: data[0].lat, lon: data[0].lon})
     }
