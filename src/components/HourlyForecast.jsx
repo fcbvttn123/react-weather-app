@@ -11,7 +11,7 @@ export function HourlyForecast(props) {
     })
 
     return (
-        <div className="min-w-2/10 px-4">
+        <div className="min-w-2/10 px-4 maxWidth680px:min-w-3/10 maxWidth680px:px-1">
             <div className="rounded py-1 flex flex-col items-center justify-between gap-y-2 hourly-forecast-component">
                 <p className="text-gray-100">{props.time}</p>
                 <img width={"30px"} src={`/weather-icons/${imageName}.png`} />

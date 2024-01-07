@@ -16,7 +16,7 @@ export function CurrentWeather({location, day, month, temp, sky, icon, realFeel,
             </div>
             {/* Air Condition */}
             <h1 className="text-center text-lg font-bold mt-10">Air Condition</h1>
-            <div className="flex items-stretch justify-between mt-3">
+            <div className="flex items-stretch justify-between mt-3 maxWidth680px:grid maxWidth680px:grid-cols-2 maxWidth680px:gap-10">
                 <div className="flex flex-col items-center justify-between">
                     <div className="flex items-center justify-between gap-x-2">
                         <span className="material-symbols-outlined">device_thermostat</span>

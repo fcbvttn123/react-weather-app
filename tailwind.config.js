@@ -8,8 +8,15 @@ export default {
     extend: {
       minWidth: {
         '2/10': '20%',
+        '3/10': '33.333%',
+      }, 
+      flexGrow: {
+        2: '2'
       }
     },
+    screens: {
+      "maxWidth680px": {"max": "680px"}
+    }
   },
   plugins: [],
 }
